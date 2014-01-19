@@ -34,10 +34,17 @@ module.exports = function (grunt) {
       coffeeTest: {
         files: ['test/spec/{,*/}*.{coffee,litcoffee,coffee.md}'],
         tasks: ['newer:coffee:test', 'karma']
+      },
+      js: {
+        files: ['.tmp/scripts/{,*/}*.js'],
+        tasks: ['ngdocs'],
+        options: {
+          livereload: true
+        }
       },<% } else { %>
       js: {
         files: ['<%%= yeoman.app %>/scripts/{,*/}*.js'],
-        tasks: ['newer:jshint:all'],
+        tasks: ['ngdocs', 'newer:jshint:all'],
         options: {
           livereload: true
         }
@@ -352,6 +359,16 @@ module.exports = function (grunt) {
         cwd: '<%%= yeoman.app %>/styles',
         dest: '.tmp/styles/',
         src: '{,*/}*.css'
+      },
+      ngdocs: {
+        expand: true,
+        cwd: '<%%= yeoman.app %>/docs',
+        dest: '.tmp/docs/',
+        src: [
+          '*.{ico,png,txt}',
+          '.htaccess',
+          '*.html',
+        ]
       }
     },
 
@@ -408,6 +425,13 @@ module.exports = function (grunt) {
         configFile: 'karma.conf.js',
         singleRun: true
       }
+    },
+    ngdocs: {
+      options: {
+        dest: '.tmp/docs',
+        html5Mode: false
+      },
+      api: ['<% if (coffee) { %>.tmp<% } else { %><%%= yeoman.app %><% } %>/scripts/{,*/}*.js'],
     }
   });
 
@@ -422,6 +446,7 @@ module.exports = function (grunt) {
       'bower-install',
       'concurrent:server',
       'autoprefixer',
+      'ngdocs',
       'connect:livereload',
       'watch'
     ]);
@@ -448,6 +473,7 @@ module.exports = function (grunt) {
     'autoprefixer',
     'concat',
     'ngmin',
+    'ngdocs',
     'copy:dist',
     'cdnify',
     'cssmin',
